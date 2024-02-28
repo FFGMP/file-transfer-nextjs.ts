@@ -17,4 +17,23 @@ export type AsyncResponse<T> = Promise<
     }
 >;
 
-export type fileUpload = { ficheiros: Array<string>; status: Boolean };
+export type FileUpload = { ficheiros: Array<string>; status: string };
+
+export type APISuccessType<T> = {
+  status: "success";
+  message: string;
+  data: T;
+};
+
+export type APIErrorType = {
+  status: "failed";
+  error: {
+    code: string;
+    message: string;
+    stack?: string;
+  };
+};
+
+export type FileManager =
+  | { filename: string; statusofFile: true }
+  | { filename: string; statusofFile: false; error: string };
