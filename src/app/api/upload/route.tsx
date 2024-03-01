@@ -33,7 +33,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         }
       }
       return fileStatus;
-    }
+    },
   );
   managerStatusArray = await Promise.all(filePromises);
 

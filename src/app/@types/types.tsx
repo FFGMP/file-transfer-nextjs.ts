@@ -37,3 +37,9 @@ export type APIErrorType = {
 export type FileManager =
   | { filename: string; statusofFile: true }
   | { filename: string; statusofFile: false; error: string };
+
+export type FileProperties = {
+  filename: string;
+  size: number;
+  extension: string;
+};

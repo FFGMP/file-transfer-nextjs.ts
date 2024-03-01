@@ -1,9 +1,11 @@
 "use client";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { AsyncResponse } from "../@types/types";
 import { FileUpload } from "../@types/types";
+import { FileProperties } from "../@types/types";
 
 async function sendFileToAPI(
-  file: HTMLInputElement
+  file: HTMLInputElement,
 ): Promise<AsyncResponse<FileUpload>> {
   const formData = new FormData();
   if (file.files) {
@@ -34,30 +36,62 @@ async function sendFileToAPI(
     data: data,
   };
 }
-const uploadFiles = async (v: HTMLInputElement) => {
-  var apiReturnValues;
-  apiReturnValues = await sendFileToAPI(v);
-  console.log(apiReturnValues.status);
+
+const uploadFilesEvent = async (v: HTMLInputElement) => {
+  await sendFileToAPI(v);
 };
 
-export function InputFile() {
+function fileDragHandler(
+  e: React.DragEvent<HTMLSpanElement>,
+  setFiles: Dispatch<SetStateAction<Array<FileProperties>>>,
+) {
+  e.preventDefault();
+  if (e.dataTransfer.items) {
+    Array.from(e.dataTransfer.items).map((item) => {
+      if (item.kind === "file") {
+        const file = item.getAsFile();
+        setFiles((prevFiles) => {
+          if (file?.name) {
+            return [
+              ...prevFiles,
+              { filename: file.name, size: file?.size, extension: file?.type },
+            ];
+          }
+          return prevFiles;
+        });
+      }
+    });
+  }
+}
+
+export function InputFile({ setFilesToListComponent }: any) {
+  const [getFiles, setFiles] = useState<Array<FileProperties>>([]);
+  useEffect(() => {
+    setFilesToListComponent(getFiles);
+  }, [getFiles]);
   return (
-    <div className="flex flex-col justify-center items-center bg-neutral-800 w-full sm:w-[600px] h-[500px] transition-all duration-200 rounded-md">
+    <div className="flex h-[500px] w-full flex-col items-center justify-center rounded-md bg-neutral-800 transition-all duration-500 sm:w-[600px]">
       <label
-        className="h-full w-full flex flex-col justify-center items-center cursor-pointer border-4 border-dashed border-neutral-600 rounded-md p-4"
+        className="flex h-full w-full cursor-pointer flex-col items-center justify-center rounded-md border-4 border-dashed border-neutral-600 p-4"
         htmlFor="fileDrop"
+        onDrop={(e) => {
+          fileDragHandler(e, setFiles);
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+        }}
       >
-        <span className="text-neutral-400 select-none">
+        <span className="select-none text-neutral-400">
           Drag and drop files here or click to browse
         </span>
       </label>
       <input
-        className="w-full hidden"
+        className="hidden w-full"
         id="fileDrop"
         type="file"
         multiple
         onChange={(e) => {
-          uploadFiles(e.target);
+          uploadFilesEvent(e.target);
         }}
       ></input>
     </div>
