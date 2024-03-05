@@ -17,14 +17,20 @@ export type AsyncResponse<T> = Promise<
     }
 >;
 
-export type FileUpload = { ficheiros: Array<string>; status: string };
-
+//Isto é a devolução do pedido caso este seja de sucesso por parte da API
 export type APISuccessType<T> = {
   status: "success";
   message: string;
   data: T;
+  path: string;
 };
 
+//Isto é o conteudo do que vai em "data" para a resposta da API
+export type FileManager =
+  | { filename: string; statusofFile: true }
+  | { filename: string; statusofFile: false; error: string };
+
+//Isto é a devolução do pedido caso este seja de erro por parte da API
 export type APIErrorType = {
   status: "failed";
   error: {
@@ -32,14 +38,4 @@ export type APIErrorType = {
     message: string;
     stack?: string;
   };
-};
-
-export type FileManager =
-  | { filename: string; statusofFile: true }
-  | { filename: string; statusofFile: false; error: string };
-
-export type FileProperties = {
-  filename: string;
-  size: number;
-  extension: string;
 };

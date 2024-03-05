@@ -1,4 +1,4 @@
-import { FileProperties } from "@/app/@types/types";
+import { useStoreFiles } from "@/app/@store/store";
 
 function formatSize(size: number): string {
   const units = ["B", "KB", "MB", "GB", "TB"];
@@ -11,25 +11,38 @@ function formatSize(size: number): string {
 }
 
 export function FileCards({ getFiles }: any) {
+  const { removeFile } = useStoreFiles();
   return (
     <>
-      <div className="mb-3 flex w-full flex-col rounded-md">
-        {Array.from(getFiles as Array<FileProperties>).map((v, i) => (
+      <div className="flex w-full flex-col rounded-md">
+        {Array.from(getFiles as Array<File>).map((v, i) => (
           <div
-            className="flex flex-col border-b-2 border-neutral-600 p-3 text-neutral-50 last:border-b-0"
+            className="flex flex-row items-center justify-between border-b-2 border-neutral-600 p-3 text-neutral-50 last:border-b-0"
             key={i}
           >
-            <div>
-              <p title={v.filename} className="truncate ">
-                {v.filename}
-              </p>
+            <div className="truncate">
+              <div>
+                <p title={v.name} className="truncate ">
+                  {v.name}
+                </p>
+              </div>
+              <div className="flex flex-row items-center">
+                <p className="mr-2 text-sm">{formatSize(v.size)}</p>
+                <p className="select-none">|</p>
+                <p className="ml-2 text-sm">{v.name.match(/\.[0-9a-z]+$/i)}</p>
+              </div>
             </div>
-            <div className="flex flex-row items-center">
-              <p className="mr-2 text-sm">{formatSize(v.size)}</p>
-              <p>|</p>
-              <p className="ml-2 text-sm">
-                {v.filename.match(/\.[0-9a-z]+$/i)}
-              </p>
+            <div className="flex flex-row">
+              <button
+                title="Remove file"
+                value={v.name}
+                onClick={(e) => {
+                  removeFile((e.target as HTMLButtonElement).value);
+                }}
+                className="h-full select-none"
+              >
+                🗑️
+              </button>
             </div>
           </div>
         ))}

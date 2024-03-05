@@ -1,17 +1,17 @@
-"use client";
-
-import { useState } from "react";
 import { InputFile } from "./@components/inputFile";
 import { ListFiles } from "./@components/listFiles";
-import { FileProperties } from "./@types/types";
+import { SubmitFilesToAPI } from "./@components/submitFilesToAPI";
 
 export default function Home() {
-  const [getFilesforList, setFilesforList] = useState<Array<FileProperties>>();
-
   return (
-    <main className="my-2 flex min-h-screen flex-col items-center justify-center md:flex-row">
-      <InputFile setFilesToListComponent={setFilesforList} />
-      <ListFiles getFiles={getFilesforList} />
+    <main className="flex min-h-screen flex-col justify-center">
+      <div className="flex flex-col items-center justify-center md:flex-row">
+        <InputFile />
+        <ListFiles />
+      </div>
+      <div className="flex flex-col items-center justify-center">
+        <SubmitFilesToAPI />
+      </div>
     </main>
   );
 }

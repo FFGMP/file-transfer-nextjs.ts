@@ -1,81 +1,48 @@
 "use client";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { AsyncResponse } from "../@types/types";
-import { FileUpload } from "../@types/types";
-import { FileProperties } from "../@types/types";
-
-async function sendFileToAPI(
-  file: HTMLInputElement,
-): Promise<AsyncResponse<FileUpload>> {
-  const formData = new FormData();
-  if (file.files) {
-    for (let index = 0; index < file.files.length; index++) {
-      formData.append(file.files[index].name, file.files[index]);
-    }
-  }
-
-  const response = await fetch("http://localhost:3000/api/upload", {
-    method: "post",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    return {
-      status: "failed",
-      error: {
-        code: "500",
-        message: "Internal Server Error",
-      },
-    };
-  }
-
-  const data: FileUpload = await response.json();
-
-  return {
-    status: "success",
-    data: data,
-  };
-}
-
-const uploadFilesEvent = async (v: HTMLInputElement) => {
-  await sendFileToAPI(v);
-};
+import { useStoreFiles } from "../@store/store";
+import { StoreFile } from "../@store/store";
 
 function fileDragHandler(
   e: React.DragEvent<HTMLSpanElement>,
-  setFiles: Dispatch<SetStateAction<Array<FileProperties>>>,
+  addFile: StoreFile["addFile"],
 ) {
   e.preventDefault();
   if (e.dataTransfer.items) {
     Array.from(e.dataTransfer.items).map((item) => {
       if (item.kind === "file") {
         const file = item.getAsFile();
-        setFiles((prevFiles) => {
-          if (file?.name) {
-            return [
-              ...prevFiles,
-              { filename: file.name, size: file?.size, extension: file?.type },
-            ];
-          }
-          return prevFiles;
-        });
+        if (file?.name) {
+          addFile(file);
+        }
       }
     });
   }
 }
 
-export function InputFile({ setFilesToListComponent }: any) {
-  const [getFiles, setFiles] = useState<Array<FileProperties>>([]);
-  useEffect(() => {
-    setFilesToListComponent(getFiles);
-  }, [getFiles]);
+function filesAddedToTheInput(
+  e: React.ChangeEvent<HTMLInputElement>,
+  addFile: StoreFile["addFile"],
+) {
+  e.preventDefault();
+  if (e.target.files) {
+    Array.from(e.target.files).map((item) => {
+      if (item?.name) {
+        addFile(item);
+      }
+    });
+  }
+}
+
+export function InputFile() {
+  const { addFile } = useStoreFiles();
+
   return (
-    <div className="flex h-[500px] w-full flex-col items-center justify-center rounded-md bg-neutral-800 transition-all duration-500 sm:w-[600px]">
+    <div className="mt-2 flex h-[500px] w-full flex-col items-center justify-center rounded-md bg-neutral-800 transition-all duration-500 sm:w-[600px] md:mt-0">
       <label
         className="flex h-full w-full cursor-pointer flex-col items-center justify-center rounded-md border-4 border-dashed border-neutral-600 p-4"
         htmlFor="fileDrop"
         onDrop={(e) => {
-          fileDragHandler(e, setFiles);
+          fileDragHandler(e, addFile);
         }}
         onDragOver={(e) => {
           e.preventDefault();
@@ -91,7 +58,8 @@ export function InputFile({ setFilesToListComponent }: any) {
         type="file"
         multiple
         onChange={(e) => {
-          uploadFilesEvent(e.target);
+          //uploadFilesEvent(e.target);
+          filesAddedToTheInput(e, addFile);
         }}
       ></input>
     </div>
