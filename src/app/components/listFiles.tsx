@@ -1,7 +1,7 @@
 "use client";
 
-import { FileCards } from "./@listFilesComponents/listFileCards";
-import { useStoreFiles } from "../@store/store";
+import { FileCards } from "./listFilesComponents/listFileCards";
+import { useStoreFiles } from "../store/store";
 
 function formatSize(size: number): string {
   const units = ["B", "KB", "MB", "GB", "TB"];

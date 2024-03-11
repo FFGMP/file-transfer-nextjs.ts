@@ -39,3 +39,9 @@ export type APIErrorType = {
     stack?: string;
   };
 };
+
+export type FileStatsType = {
+  fileName: string;
+  size: string;
+  type: string | undefined;
+};

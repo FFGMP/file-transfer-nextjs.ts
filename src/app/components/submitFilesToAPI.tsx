@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useStoreFiles } from "../@store/store";
-import { AsyncResponse, APISuccessType, FileManager } from "../@types/types";
+import { useStoreFiles } from "../store/store";
+import { AsyncResponse, APISuccessType, FileManager } from "../types/types";
 import { useRouter } from "next/navigation";
 
 async function sendFileToAPI(
@@ -50,6 +50,7 @@ export function SubmitFilesToAPI() {
   useEffect(() => {
     return () => {
       resetFiles();
+      setSubmitLoading(false);
     };
   }, []);
 
@@ -59,18 +60,13 @@ export function SubmitFilesToAPI() {
         className={`mb-2 mt-2 rounded-md border border-white bg-neutral-900 p-2 duration-300  md:mb-0 ${isSubmitLoading ? "cursor-not-allowed bg-neutral-950" : "hover:bg-neutral-950"}`}
         onClick={() => {
           setSubmitLoading(true);
-          uploadFilesEvent(files)
-            .then((v) => {
-              if (v.status === "success") {
-                if (v.data.path != "") {
-                  router.push("/download/" + v.data.path);
-                }
+          uploadFilesEvent(files).then((v) => {
+            if (v.status === "success") {
+              if (v.data.path != "") {
+                router.push("/download/" + v.data.path);
               }
-              setSubmitLoading(false);
-            })
-            .finally(() => {
-              setSubmitLoading(false);
-            });
+            }
+          });
         }}
         disabled={isSubmitLoading}
       >

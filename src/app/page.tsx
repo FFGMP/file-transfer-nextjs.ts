@@ -1,6 +1,6 @@
-import { InputFile } from "./@components/inputFile";
-import { ListFiles } from "./@components/listFiles";
-import { SubmitFilesToAPI } from "./@components/submitFilesToAPI";
+import { InputFile } from "./components/inputFile";
+import { ListFiles } from "./components/listFiles";
+import { SubmitFilesToAPI } from "./components/submitFilesToAPI";
 
 export default function Home() {
   return (

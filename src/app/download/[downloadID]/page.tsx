@@ -1,4 +1,4 @@
-import { DownloadDiv } from "../@components/downloadDiv";
+import { DownloadDiv } from "../components/downloadDiv";
 
 export default function Download({
   params,
@@ -7,7 +7,7 @@ export default function Download({
 }) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
-      <DownloadDiv teste={params.downloadID} />
+      <DownloadDiv path={params.downloadID} />
     </main>
   );
 }

@@ -1,4 +1,4 @@
-import { useStoreFiles } from "@/app/@store/store";
+import { useStoreFiles } from "@/app/store/store";
 
 function formatSize(size: number): string {
   const units = ["B", "KB", "MB", "GB", "TB"];

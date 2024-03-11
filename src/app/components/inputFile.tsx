@@ -1,6 +1,6 @@
 "use client";
-import { useStoreFiles } from "../@store/store";
-import { StoreFile } from "../@store/store";
+import { useStoreFiles } from "../store/store";
+import { StoreFile } from "../store/store";
 
 function fileDragHandler(
   e: React.DragEvent<HTMLSpanElement>,

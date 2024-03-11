@@ -1,15 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
-import { APISuccessType, APIErrorType } from "@/app/@types/types";
+import { APISuccessType, APIErrorType, FileStatsType } from "@/app/types/types";
 import { promises } from "fs";
+
+function formatSize(size: number): string {
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  let index = 0;
+  while (size >= 1024 && index < units.length - 1) {
+    size /= 1024;
+    index++;
+  }
+  return `${size.toFixed(2)} ${units[index]}`;
+}
 
 export async function POST(
   request: NextRequest,
 ): Promise<
-  NextResponse<APISuccessType<Array<string>>> | NextResponse<APIErrorType>
+  | NextResponse<APISuccessType<Array<FileStatsType>>>
+  | NextResponse<APIErrorType>
 > {
   const formDataPath: string = (await request.formData()).get("path") as string;
   var filesDirUploads: Array<string> = [];
   var files: Array<string>;
+  var filesStats: Array<FileStatsType> = [];
 
   try {
     var filesDirUploads = await promises.readdir("../uploads/");
@@ -27,8 +39,8 @@ export async function POST(
     return NextResponse.json({
       status: "failed",
       error: {
-        code: "500",
-        message: "Something went wrong.",
+        code: "404",
+        message: "Something went wrong. Your file does not exist.",
       },
     });
   }
@@ -45,10 +57,33 @@ export async function POST(
     });
   }
 
+  try {
+    await Promise.all(
+      files.map(async (v) => {
+        const fileStats = await promises.stat(
+          "../uploads/" + formDataPath + "/" + v,
+        );
+        filesStats.push({
+          fileName: v,
+          size: formatSize(fileStats.size).toString(),
+          type: v.match(/\.[0-9a-z]+$/i)?.toString(),
+        });
+      }),
+    );
+  } catch (error) {
+    return NextResponse.json({
+      status: "failed",
+      error: {
+        code: "500",
+        message: "Something went wrong.",
+      },
+    });
+  }
+
   return NextResponse.json({
     status: "success",
-    message: "Files were uploaded!",
-    data: files,
+    message: "Have your files!",
+    data: filesStats,
     path: formDataPath,
   });
 }

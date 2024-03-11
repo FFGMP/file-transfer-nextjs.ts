@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { join } from "path";
 import { promises } from "fs";
-import { APIErrorType, APISuccessType, FileManager } from "@/app/@types/types";
+import { APIErrorType, APISuccessType, FileManager } from "@/app/types/types";
 import crypto from "crypto";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
