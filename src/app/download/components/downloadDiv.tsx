@@ -109,7 +109,7 @@ export const DownloadDiv = async ({ path }: { path: string }) => {
         </div>
       </div>
       <div className="flex items-center justify-center">
-        <DownloadButton />
+        <DownloadButton path={path} />
       </div>
     </div>
   );

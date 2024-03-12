@@ -37,7 +37,7 @@ export function InputFile() {
   const { addFile } = useStoreFiles();
 
   return (
-    <div className="mt-2 flex h-[500px] w-full flex-col items-center justify-center rounded-md bg-neutral-800 transition-all duration-500 sm:w-[600px] md:mt-0">
+    <div className="mt-2 flex h-64 w-full flex-col items-center justify-center rounded-md bg-neutral-800 transition-all duration-500 sm:h-[500px] sm:w-[600px] md:mt-0">
       <label
         className="flex h-full w-full cursor-pointer flex-col items-center justify-center rounded-md border-4 border-dashed border-neutral-600 p-4"
         htmlFor="fileDrop"

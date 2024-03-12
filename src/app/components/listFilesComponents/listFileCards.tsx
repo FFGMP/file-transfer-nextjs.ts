@@ -17,7 +17,7 @@ export function FileCards({ getFiles }: any) {
       <div className="flex w-full flex-col rounded-md">
         {Array.from(getFiles as Array<File>).map((v, i) => (
           <div
-            className="flex flex-row items-center justify-between border-b-2 border-neutral-600 p-3 text-neutral-50 last:border-b-0"
+            className="flex flex-row items-center justify-between border-b-2 border-neutral-600 p-2 text-neutral-50 first:pt-1 last:border-b-0 last:pb-1"
             key={i}
           >
             <div className="truncate">

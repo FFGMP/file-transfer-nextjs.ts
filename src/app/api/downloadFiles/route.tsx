@@ -1,11 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promises } from "fs";
+import JSZip from "jszip";
 
-export async function POST(request: NextRequest): Promise<NextResponse> {
-  const pathFromClient = (await request.formData()).get("path") as string;
-  var filesDirUploads: Array<string> = [];
-  var files: Array<string>;
-  var arrayWithBLOB: Array<Buffer> = [];
+async function zipToDownload(
+  files: ({ filename: string; content: Buffer } | undefined)[],
+): Promise<Blob> {
+  const zip = new JSZip();
+  files.map((file) => {
+    if (file != undefined) {
+      zip.file(file.filename, file.content);
+    }
+  });
+  const downloadZIP = zip.generateAsync({ type: "blob" });
+
+  return downloadZIP;
+}
+
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  const { searchParams } = new URL(request.url);
+  let pathFromClient: string = "";
+  let filesDirUploads: Array<string> = [];
+  let files: Array<string>;
+
+  try {
+    pathFromClient = JSON.parse(searchParams.get("path") || "");
+  } catch (error) {}
 
   //Caso nao exista body com "path" da erro e nao prossegue
   if (!pathFromClient) {
@@ -52,27 +71,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     });
   }
 
-  const teste: Promise<Array<Buffer | undefined>> = Promise.all(
+  const filesToZIP: Promise<
+    ({ filename: string; content: Buffer } | undefined)[]
+  > = Promise.all(
     files.map(async (v) => {
       try {
-        const contents = await promises.readFile(
+        const content = await promises.readFile(
           "../uploads/" + pathFromClient + "/" + v,
         );
-        return contents;
+
+        return { filename: v, content: content };
       } catch (error) {
         console.error(error);
       }
     }),
   );
 
-  const headers = new Headers();
-
-  headers.set("Content-Type", "application/octet-stream");
-  headers.set("Content-Disposition", 'attachment; filename="picture.file"');
-
-  return new NextResponse((await teste)[0], {
-    status: 200,
-    statusText: "OK",
-    headers,
-  });
+  const zip = await zipToDownload(await filesToZIP);
+  return new NextResponse(zip);
 }
