@@ -65,6 +65,8 @@ export function SubmitFilesToAPI() {
               if (v.data.path != "") {
                 router.push("/download/" + v.data.path);
               }
+            } else {
+              setSubmitLoading(false);
             }
           });
         }}
